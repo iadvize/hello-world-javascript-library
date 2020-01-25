@@ -1,0 +1,24 @@
+name: Pull request
+
+on:
+  pull_request:
+    types: [assigned, unassigned, labeled, unlabeled, opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  assignee:
+    name: 'check assignee'
+    runs-on: ubuntu-18.04
+
+    env:
+      ASSIGNEES: ${{ toJson(github.event.pull_request.assignees) }}
+
+    steps:
+    - name: Fail if no assignee
+      run: |
+        LENGTH=$(echo $ASSIGNEES | jq 'length')
+
+        if [[ "$LENGTH" -le "0" ]]; then
+          echo "::error ::Missing assignee on PR"
+          exit 1
+        fi
+
