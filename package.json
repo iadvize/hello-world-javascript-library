@@ -1,0 +1,31 @@
+{
+  "name": "@iadvize-oss/hello-world",
+  "version": "0.0.0",
+  "description": "Does nothing.",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"no test\"",
+    "lint": "echo \"no lint\""
+  },
+  "homepage": "https://github.com/iadvize/hello-world-javascript-library#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iadvize/hello-world-javascript-library.git"
+  },
+  "keywords": [
+    "iAdvize"
+  ],
+  "bugs": {
+    "url": "https://github.com/iadvize/hello-world-javascript-library/issues"
+  },
+  "author": "iAdvize developers",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "typescript": "^3.7.5"
+  }
+}
