@@ -2,7 +2,7 @@ name: Pull request
 
 on:
   pull_request:
-    types: [assigned, unassigned, labeled, unlabeled, opened, reopened, synchronize, ready_for_review]
+    types: [assigned, unassigned, labeled, unlabeled, reopened, synchronize, ready_for_review]
 
 jobs:
   assignee:
