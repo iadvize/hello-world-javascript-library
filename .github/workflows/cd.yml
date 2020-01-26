@@ -208,7 +208,7 @@ jobs:
         MERGED: ${{ steps.extract-merged-status.outputs.merged }}
         VERSION_CHANGED: ${{ steps.extract-version-label.outputs.version-changed }}
       run: |
-        if [ "$MERGED" == "true "] && [ "$VERSION_CHANGED" == "true" ]; then
+        if [ "$MERGED" == "true" ] && [ "$VERSION_CHANGED" == "true" ]; then
           echo "::set-output name=result::true"
         else
           echo "::set-output name=result::false"
