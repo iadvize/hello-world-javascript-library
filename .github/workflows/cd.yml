@@ -71,6 +71,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2-beta
+      with:
+        ref: master
 
     - uses: actions/setup-node@v1
       with:
@@ -95,6 +97,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2-beta
+      with:
+        ref: master
 
     - uses: actions/setup-node@v1
       with:
@@ -130,6 +134,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2-beta
+      with:
+        ref: master
 
     - name: Git config
       run: |
