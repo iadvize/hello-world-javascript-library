@@ -23,16 +23,16 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-npm-v1-${{ hashFiles('package-lock.json') }}
+        key: v1-npm-${{ github.event.pull_request.head.ref }}-${{ hashFiles('package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-npm-v1-
+          v1-npm-
 
     - name: Restore node_modules
       id: node-modules-cache
       uses: actions/cache@v1
       with:
         path: node_modules
-        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+        key: v1-node-modules-${{ github.event.pull_request.head.ref }}-${{ hashFiles('package-lock.json') }}
 
     - name: Install
       if: steps.node-modules-cache.outputs.cache-hit != 'true'
@@ -59,7 +59,7 @@ jobs:
       id: node-modules-cache
       with:
         path: node_modules
-        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+        key: v1-node-modules-${{ github.event.pull_request.head.ref }}-${{ hashFiles('package-lock.json') }}
 
     - name: Lint
       run: npm run lint
@@ -85,7 +85,7 @@ jobs:
       id: node-modules-cache
       with:
         path: node_modules
-        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+        key: v1-node-modules-${{ github.event.pull_request.head.ref }}-${{ hashFiles('package-lock.json') }}
 
     - name: Test
       run: npm run test
@@ -111,7 +111,7 @@ jobs:
       id: node-modules-cache
       with:
         path: node_modules
-        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+        key: v1-node-modules-${{ github.event.pull_request.head.ref }}-${{ hashFiles('package-lock.json') }}
 
     - name: Build
       run: npm run build
@@ -153,7 +153,7 @@ jobs:
       id: node-modules-cache
       with:
         path: node_modules
-        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+        key: v1-node-modules-${{ github.event.pull_request.head.ref }}-${{ hashFiles('package-lock.json') }}
 
     - name: Retrieve build output
       uses: actions/download-artifact@v1
