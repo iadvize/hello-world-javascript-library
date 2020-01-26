@@ -148,6 +148,13 @@ jobs:
         registry-url: https://registry.npmjs.org/
         node-verion: '12.x'
 
+    - name: Restore node_modules
+      uses: actions/cache@v1
+      id: node-modules-cache
+      with:
+        path: node_modules
+        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+
     - name: Retrieve build output
       uses: actions/download-artifact@v1
       with:
