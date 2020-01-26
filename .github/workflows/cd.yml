@@ -215,6 +215,7 @@ jobs:
         fi
 
     - name: Bumb version
+      id: bump-version
       if: steps.should-publish.outputs.result == 'true'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -222,11 +223,23 @@ jobs:
       run: |
         npm version $BUMP_TYPE
 
+        NEW_VERSION=$(cat package.json | jq -r '.version')
+        echo "::set-output name=new-version::$NEW_VERSION"
+
+    - name: Update CHANGELOG
+      uses: iadvize/actions/bump-changelog@8ed8e19f6ffc90f616401053a35a47346fe0a35d
+      with:
+        version: ${{ steps.bump-version.outputs.new-version }}
+        path: './CHANGELOG.md'
+
     - name: Publish npm
       if: steps.should-publish.outputs.result == 'true'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
+        git add ./CHANGELOG.md
+        git commit --amend --no-edit
+
         npm publish --access public --tag latest
 
     - name: Push on master
