@@ -60,5 +60,6 @@ jobs:
     - name: Publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        BRANCH: ${{ github.event.pull_request.head.ref }}
       run: |
-        npm publish --access public --tag canary
+        npm publish --access public --tag $BRANCH
