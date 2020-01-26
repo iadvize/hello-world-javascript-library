@@ -228,6 +228,7 @@ jobs:
         echo "::set-output name=new-version::$NEW_VERSION"
 
     - name: Update CHANGELOG
+      if: steps.should-publish.outputs.result == 'true'
       uses: iadvize/actions/bump-changelog@8ed8e19f6ffc90f616401053a35a47346fe0a35d
       with:
         version: ${{ steps.bump-version.outputs.new-version }}
