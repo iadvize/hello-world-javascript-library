@@ -1,0 +1,205 @@
+name: Deployment
+
+on:
+  pull_request:
+    branches: [master]
+    types: [closed]
+
+jobs:
+  install:
+    name: 'install'
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2-beta
+      with:
+        ref: master
+
+    - uses: actions/setup-node@v1
+      with:
+        node-verion: '12.x'
+
+    - name: Cache npm cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-v1-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-v1-
+
+    - name: Restore node_modules
+      id: node-modules-cache
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Install
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: npm ci
+
+  lint:
+    name: 'lint'
+    runs-on: ubuntu-18.04
+
+    needs:
+      - install
+
+    steps:
+    - uses: actions/checkout@v2-beta
+
+    - uses: actions/setup-node@v1
+      with:
+        node-verion: '12.x'
+
+    - name: Restore node_modules
+      uses: actions/cache@v1
+      id: node-modules-cache
+      with:
+        path: node_modules
+        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Lint
+      run: npm run lint
+
+  test:
+    name: 'test'
+    runs-on: ubuntu-18.04
+
+    needs:
+      - install
+
+    steps:
+    - uses: actions/checkout@v2-beta
+
+    - uses: actions/setup-node@v1
+      with:
+        node-verion: '12.x'
+
+    - name: Restore node_modules
+      uses: actions/cache@v1
+      id: node-modules-cache
+      with:
+        path: node_modules
+        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Test
+      run: npm run test
+
+  build:
+    name: 'build'
+    runs-on: ubuntu-18.04
+
+    needs:
+      - install
+
+    steps:
+    - uses: actions/checkout@v2-beta
+
+    - uses: actions/setup-node@v1
+      with:
+        node-verion: '12.x'
+
+    - name: Restore node_modules
+      uses: actions/cache@v1
+      id: node-modules-cache
+      with:
+        path: node_modules
+        key: v1-node-modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Build
+      run: npm run build
+
+    - name: Save build output
+      uses: actions/upload-artifact@v1
+      with:
+        name: builtPackage
+        path: .
+
+  publish:
+    name: 'publish if needed'
+    runs-on: ubuntu-18.04
+
+    needs:
+      - install
+      - lint
+      - test
+      - build
+
+    if: github.event.pull_request.merged == 'true'
+
+    steps:
+    - uses: actions/checkout@v2-beta
+
+    - name: Git config
+      run: |
+        git config user.name "Github actions"
+        git config user.email "github-actions@iadvize.com"
+
+    - uses: actions/setup-node@v1
+      with:
+        registry-url: https://registry.npmjs.org/
+        node-verion: '12.x'
+
+    - name: Retrieve build output
+      uses: actions/download-artifact@v1
+      with:
+        name: builtPackage
+
+    - name: Extract version label
+      id: extract-version-label
+      uses: actions/github-script@0.4.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const versionLabels = [
+            'patch',
+            'minor',
+            'major',
+          ];
+
+          const { data: labels } = await github.issues.listLabelsOnIssue({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.payload.pull_request.number,
+            per_page: 100,
+          });
+
+          const versionLabelsPresent = labels
+            .filter(label => versionLabels.includes(label.name))
+
+          console.log(`::debug ::${versionLabelsPresent.length} matching labels`);
+
+          if (versionLabelsPresent.length > 1) {
+            throw new Error('Pull request should have only one version label');
+          }
+
+          if (versionLabelsPresent.length === 1) {
+            console.log('::set-output name=version-changed::true');
+            console.log(`::set-output name=label::${versionLabelsPresent[0].name}`)
+            return;
+          }
+
+          console.log('::set-output name=version-changed::false');
+
+    - name: Bumb version
+      if: steps.extract-version-label.outputs.version-changed == 'true'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        BUMP_TYPE: ${{ steps.extract-version-label.outputs.label }}
+      run: |
+        npm version $BUMP_TYPE
+
+    - name: Publish npm
+      if: steps.extract-version-label.outputs.version-changed == 'true'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        npm publish --access public --tag latest
+
+    - name: Push on master
+      if: steps.extract-version-label.outputs.version-changed == 'true'
+      run: |
+        git push
+        git push --tags
+
