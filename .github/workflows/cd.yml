@@ -229,6 +229,10 @@ jobs:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         BUMP_TYPE: ${{ steps.extract-version-label.outputs.label }}
       run: |
+        ls
+        ls node_modules
+        ls node_modules/.bin
+
         npm version $BUMP_TYPE
 
         NEW_VERSION=$(cat package.json | jq -r '.version')
