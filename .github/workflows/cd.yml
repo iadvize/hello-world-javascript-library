@@ -164,8 +164,6 @@ jobs:
             pull_number: context.payload.pull_request.number,
           });
 
-          console.log({ pull });
-
           console.log(`::set-output name=merged::${pull.merged}`);
 
     - name: Extract version label
@@ -207,7 +205,7 @@ jobs:
     - name: Compute should-publish
       id: should-publish
       env:
-        MERGED: ${{ steps.extract-merged-status.outputs.merged }}
+        MERGED: ${{ steps.extract-merge-status.outputs.merged }}
         VERSION_CHANGED: ${{ steps.extract-version-label.outputs.version-changed }}
       run: |
         if [ "$MERGED" == "true" ] && [ "$VERSION_CHANGED" == "true" ]; then
