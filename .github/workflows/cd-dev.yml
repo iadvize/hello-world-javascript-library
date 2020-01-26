@@ -12,6 +12,62 @@ jobs:
     steps:
     - uses: actions/checkout@v2-beta
 
+    - name: Compute canary version
+      id: compute-version
+      env:
+        # TODO - concat check-suite run id when added by Github to prevent
+        # conflict when re-running workflow on the same commit
+        ID: ${{ github.sha }}
+      run: |
+        CURRENT_VERSION=$(cat package.json | jq -r '.version')
+        CANARY_VERSION=$CURRENT_VERSION-canary-$ID
+
+        NAME=$(cat package.json | jq -r '.name')
+
+        echo "::set-output name=version::$CANARY_VERSION"
+        echo "::set-output name=name::$NAME"
+
+    - name: Create deployment
+      id: deployment
+      uses: actions/github-script@0.4.0
+      env:
+        VERSION: ${{ steps.compute-version.outputs.version }}
+        NAME: ${{ steps.compute-version.outputs.name }}
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        previews: 'ant-man-preview,flash-preview'
+        script: |
+          const version = process.env.VERSION;
+          const name = process.env.NAME;
+          const checkUrl = `${context.payload.pull_request.html_url}/checks?sha=${context.sha}`;
+          const branch = context.payload.pull_request.head.ref;
+
+          const { data: deployment } = await github.repos.createDeployment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: branch,
+            environment: 'npm',
+            auto_merge: false,
+            required_contexts: [],
+            payload: {
+              version: version
+            },
+            description: `Deploy ${name}@${version} on npm`,
+            production_environment: true,
+          });
+
+          const { data: deploymentStatus } = github.repos.createDeploymentStatus({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            deployment_id: deployment.id,
+            state: 'in_progress',
+            log_url: checkUrl,
+            description: `Deploy ${name}@${version} on npm`,
+            auto_inactive: false,
+          });
+
+          console.log(`::set-output name=deployment-id::${deployment.id}`);
+
     - uses: actions/setup-node@v1
       with:
         registry-url: https://registry.npmjs.org/
@@ -39,18 +95,6 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Compute canary version
-      id: compute-version
-      env:
-        # TODO - concat check-suite run id when added by Github to prevent
-        # conflict when re-running workflow on the same commit
-        ID: ${{ github.sha }}
-      run: |
-        CURRENT_VERSION=$(cat package.json | jq -r '.version')
-        CANARY_VERSION=$CURRENT_VERSION-canary-$ID
-
-        echo "::set-output name=version::$CANARY_VERSION"
-
     - name: Bumb version
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -58,8 +102,43 @@ jobs:
       run: npm version --no-git-tag-version $VERSION
 
     - name: Publish
+      id: publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         BRANCH: ${{ github.event.pull_request.head.ref }}
       run: |
         npm publish --access public --tag $BRANCH
+
+        echo "::set-output name=state::done"
+
+    - name: Update deployment
+      if: always()
+      uses: actions/github-script@0.4.0
+      env:
+        DEPLOYMENT_ID: ${{ steps.deployment.outputs.deployment-id }}
+        VERSION: ${{ steps.compute-version.outputs.version }}
+        NAME: ${{ steps.compute-version.outputs.name }}
+        PULL_URL: ${{ github.event.pull_request.html_url }}
+        PUBLISH_STATE: ${{ steps.publish.outputs.state }}
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        previews: 'application/vnd.github.ant-man-preview+json,application/vnd.github.flash-preview+json'
+        script: |
+          const version = process.env.VERSION;
+          const name = process.env.NAME;
+          const checkUrl = `${process.env.PULL_URL}/checks?sha=${context.sha}`;
+          const npmUrl = `https://www.npmjs.com/package/${name}/v/${version}`;
+
+          const state = process.env.PUBLISH_STATE === 'done' ? 'success' : 'failure';
+
+          const { data: deploymentStatus } = github.repos.createDeploymentStatus({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            deployment_id: process.env.DEPLOYMENT_ID,
+            log_url: checkUrl,
+            environment_url: npmUrl,
+            description: `Deployed ${name}@${version} on npm`,
+            auto_inactive: false,
+            state,
+          });
+
