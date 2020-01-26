@@ -1,0 +1,44 @@
+name: Create release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: 'Create Release'
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Extract release changelog
+        run: |
+          VERSION=$(cat package | jq -r '.version')
+          VERSION_PART=$(gsed -n '/## \[$VERSION]/,/## \[/{/## \[/d;p;}' CHANGELOG.md)
+
+          echo "::set-output name=version-part::$VERSION_PART"
+
+      - name: Create Release
+        uses: actions/github-script@0.4.0
+        env:
+          COMMIT: ${{ github.sha }}
+          TAG: ${{ github.ref }}
+          BODY: ${{ steps.extract-changelog.outputs.version-part }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: process.env.TAG,
+              target_commitish: process.env.COMMIT,
+              name: process.env.TAG,
+              body: process.env.BODY,
+              draft: false,
+              prerelease: false,
+            })
