@@ -164,6 +164,8 @@ jobs:
             pull_number: context.payload.pull_request.number,
           });
 
+          console.log({ pull });
+
           console.log(`::set-output name=merged::${pull.merged}`);
 
     - name: Extract version label
