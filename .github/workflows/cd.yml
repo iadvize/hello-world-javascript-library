@@ -132,8 +132,6 @@ jobs:
       - test
       - build
 
-    if: github.event.pull_request.merged == 'true'
-
     steps:
     - uses: actions/checkout@v2-beta
       with:
@@ -153,6 +151,20 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: builtPackage
+
+    - name: Extract merge status
+      id: extract-merge-status
+      uses: actions/github-script@0.4.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { data: pull } = await github.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+          });
+
+          console.log(`::set-output name=merged::${pull.merged}`);
 
     - name: Extract version label
       id: extract-version-label
@@ -190,8 +202,20 @@ jobs:
 
           console.log('::set-output name=version-changed::false');
 
+    - name: Compute should-publish
+      id: should-publish
+      env:
+        MERGED: ${{ steps.extract-merged-status.outputs.merged }}
+        VERSION_CHANGED: ${{ steps.extract-version-label.outputs.version-changed }}
+      run: |
+        if [[ "$MERGED" == "true "]] && [[ "VERSION_CHANGED" == "true" ]]; then
+          echo "::set-output name=result::true"
+        else
+          echo "::set-output name=result::false"
+        fi
+
     - name: Bumb version
-      if: steps.extract-version-label.outputs.version-changed == 'true'
+      if: steps.should-publish.outputs.result == 'true'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         BUMP_TYPE: ${{ steps.extract-version-label.outputs.label }}
@@ -199,14 +223,14 @@ jobs:
         npm version $BUMP_TYPE
 
     - name: Publish npm
-      if: steps.extract-version-label.outputs.version-changed == 'true'
+      if: steps.should-publish.outputs.result == 'true'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
         npm publish --access public --tag latest
 
     - name: Push on master
-      if: steps.extract-version-label.outputs.version-changed == 'true'
+      if: steps.should-publish.outputs.result == 'true'
       run: |
         git push
         git push --tags
