@@ -230,6 +230,25 @@ jobs:
         NAME=$(cat package.json | jq -r '.name')
         echo "::set-output name=name::$NAME"
 
+    - name: Update CHANGELOG
+      if: steps.should-publish.outputs.result == 'true'
+      uses: iadvize/actions/bump-changelog@8ed8e19f6ffc90f616401053a35a47346fe0a35d
+      with:
+        version: ${{ steps.bump-version.outputs.new-version }}
+        path: './CHANGELOG.md'
+
+    - name: Push on master
+      id: push
+      if: steps.should-publish.outputs.result == 'true'
+      run: |
+        git add ./CHANGELOG.md
+        git commit --amend --no-edit
+
+        git push
+        git push --tags
+
+        echo "::set-output name=state::done"
+
     - name: Create deployment
       id: deployment
       if: steps.should-publish.outputs.result == 'true'
@@ -269,31 +288,14 @@ jobs:
 
           console.log(`::set-output name=deployment-id::${deployment.id}`);
 
-    - name: Update CHANGELOG
-      if: steps.should-publish.outputs.result == 'true'
-      uses: iadvize/actions/bump-changelog@8ed8e19f6ffc90f616401053a35a47346fe0a35d
-      with:
-        version: ${{ steps.bump-version.outputs.new-version }}
-        path: './CHANGELOG.md'
-
     - name: Publish npm
       if: steps.should-publish.outputs.result == 'true'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
-        git add ./CHANGELOG.md
-        git commit --amend --no-edit
 
         npm publish --access public --tag latest
 
-    - name: Push on master
-      id: push
-      if: steps.should-publish.outputs.result == 'true'
-      run: |
-        git push
-        git push --tags
-
-        echo "::set-output name=state::done"
 
     - name: Update deployment
       if: always()
