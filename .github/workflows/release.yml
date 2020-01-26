@@ -19,7 +19,7 @@ jobs:
       - name: Extract release changelog
         run: |
           VERSION=$(cat package | jq -r '.version')
-          VERSION_PART=$(gsed -n '/## \[$VERSION]/,/## \[/{/## \[/d;p;}' CHANGELOG.md)
+          VERSION_PART=$(sed -n '/## \[$VERSION]/,/## \[/{/## \[/d;p;}' CHANGELOG.md)
 
           echo "::set-output name=version-part::$VERSION_PART"
 
