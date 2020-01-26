@@ -12,10 +12,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   `hello` function
--   fake changelog entry 
--   fake changelog entry 
--   fake changelog entry 
--   fake changelog entry 
--   fake changelog entry 
--   fake changelog entry 
--   fake changelog entry 
+[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.1...v0.0.2
