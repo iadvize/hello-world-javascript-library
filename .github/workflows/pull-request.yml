@@ -9,18 +9,23 @@ jobs:
     name: 'check assignee'
     runs-on: ubuntu-18.04
 
-    env:
-      ASSIGNEES: ${{ toJson(github.event.pull_request.assignees) }}
-
     steps:
-    - name: Fail if no assignee
-      run: |
-        LENGTH=$(echo $ASSIGNEES | jq 'length')
+    - name: Check if there is at least one assignee
+      uses: actions/github-script@0.4.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { data: pull } = await github.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+          });
 
-        if [[ "$LENGTH" -le "0" ]]; then
-          echo "::error ::Missing assignee on PR"
-          exit 1
-        fi
+          if (pull.assignees.length > 0) {
+            return;
+          }
+
+          throw new Error('Should have at least one assignee');
 
   version-labels:
     name: 'check version label'
