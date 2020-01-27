@@ -14,7 +14,7 @@ jobs:
         DEPLOYMENT_ID: ${{ github.event.deployment.id }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        previews: 'application/vnd.github.ant-man-preview+json,application/vnd.github.flash-preview+json'
+        previews: 'ant-man,flash'
         script: |
           const name = context.payload.deployment.payload.name;
           const version = context.payload.deployment.payload.version;
@@ -65,7 +65,7 @@ jobs:
         PUBLISH_STATE: ${{ steps.publish.outputs.state }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        previews: 'application/vnd.github.ant-man-preview+json,application/vnd.github.flash-preview+json'
+        previews: 'ant-man,flash'
         script: |
           const name = context.payload.deployment.payload.name;
           const version = context.payload.deployment.payload.version;
