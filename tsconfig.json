@@ -14,7 +14,10 @@
     "noUnusedParameters": true,
     "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
-    "suppressExcessPropertyErrors": false
+    "suppressExcessPropertyErrors": false,
+    "lib":[
+      "ES2019"
+    ]
   },
   "exclude": [
     "node_modules"
