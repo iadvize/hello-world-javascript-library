@@ -1,4 +1,5 @@
 # hello-world-javascript-library
+![Continuous integration](https://github.com/iadvize/hello-world-javascript-library/workflows/Continuous%20integration/badge.svg)
 
 This is a repo template for other javascript oss libraries at iAdvize. Use it
 for your new library to have a repository set up with lint, test and usefull
