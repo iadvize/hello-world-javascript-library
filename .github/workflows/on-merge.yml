@@ -128,7 +128,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         previews: 'ant-man-preview,flash-preview'
         script: |
-          const version = proces.env.VERSION;
+          const version = process.env.VERSION;
 
           const { data: deployment } = await github.repos.createDeployment({
             owner: context.repo.owner,
@@ -140,7 +140,7 @@ jobs:
             payload: {
               version,
               name,
-              ref: process.env.REF,
+              ref: processs.env.REF,
               npmTag: 'latest',
             },
             description: `Deploy ${name}@${version} on npm`,
