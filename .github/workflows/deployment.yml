@@ -16,7 +16,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         previews: 'application/vnd.github.ant-man-preview+json,application/vnd.github.flash-preview+json'
         script: |
-          const { name } = require('./package.json')
+          const name = context.payload.deployment.payload.name;
           const version = context.payload.deployment.payload.version;
           const npmUrl = `https://www.npmjs.com/package/${name}/v/${version}`;
 
