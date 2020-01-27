@@ -145,7 +145,7 @@ jobs:
             payload: {
               version,
               name,
-              ref: processs.env.REF,
+              ref: process.env.REF,
               npmTag: 'latest',
             },
             description: `Deploy ${name}@${version} on npm`,
