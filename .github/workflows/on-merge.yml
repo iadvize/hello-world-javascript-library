@@ -117,6 +117,9 @@ jobs:
         VERSION=$(cat package.json | jq '.version')
         echo "::set-output name=version::$VERSION"
 
+        NAME=$(cat package.json | jq '.name')
+        echo "::set-output name=name::$NAME"
+
     - name: Create deployment
       id: deployment
       if: steps.should-publish.outputs.result == 'true'
@@ -124,10 +127,12 @@ jobs:
       env:
         REF: ${{ steps.push.output.ref }}
         VERSION: ${{ steps.push.output.VERSION }}
+        NAME: ${{ steps.push.output.NAME }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         previews: 'ant-man-preview,flash-preview'
         script: |
+          const name = process.env.name;
           const version = process.env.VERSION;
 
           const { data: deployment } = await github.repos.createDeployment({
