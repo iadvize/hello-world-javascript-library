@@ -1,0 +1,154 @@
+name: On merge
+
+on:
+  pull_request:
+    branches: [master]
+    types: [closed]
+
+jobs:
+  publish:
+    name: 'update, push version and deploy if needed'
+    runs-on: ubuntu-18.04
+
+    needs:
+      - install
+      - lint
+      - test
+      - build
+
+    steps:
+    - uses: actions/checkout@v2-beta
+      with:
+        ref: master
+        token: ${{ secrets.GITHUB_TOKEN_PONEY }}
+
+    - name: Git config
+      run: |
+        git config user.name "Github actions"
+        git config user.email "github-actions@iadvize.com"
+
+    - uses: actions/setup-node@v1
+      with:
+        registry-url: https://registry.npmjs.org/
+        node-verion: '12.x'
+
+    - name: Install
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - name: Extract merge status
+      id: extract-merge-status
+      uses: actions/github-script@0.4.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { data: pull } = await github.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+          });
+
+          console.log(`::set-output name=merged::${pull.merged}`);
+
+    - name: Extract version label
+      id: extract-version-label
+      uses: actions/github-script@0.4.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const versionLabels = [
+            'patch',
+            'minor',
+            'major',
+          ];
+
+          const { data: labels } = await github.issues.listLabelsOnIssue({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.payload.pull_request.number,
+            per_page: 100,
+          });
+
+          const versionLabelsPresent = labels
+            .filter(label => versionLabels.includes(label.name))
+
+          console.log(`::debug ::${versionLabelsPresent.length} matching labels`);
+
+          if (versionLabelsPresent.length > 1) {
+            throw new Error('Pull request should have only one version label');
+          }
+
+          if (versionLabelsPresent.length === 1) {
+            console.log('::set-output name=version-changed::true');
+            console.log(`::set-output name=label::${versionLabelsPresent[0].name}`)
+            return;
+          }
+
+          console.log('::set-output name=version-changed::false');
+
+    - name: Compute should-publish
+      id: should-publish
+      env:
+        MERGED: ${{ steps.extract-merge-status.outputs.merged }}
+        VERSION_CHANGED: ${{ steps.extract-version-label.outputs.version-changed }}
+      run: |
+        if [ "$MERGED" == "true" ] && [ "$VERSION_CHANGED" == "true" ]; then
+          echo "::set-output name=result::true"
+        else
+          echo "::set-output name=result::false"
+        fi
+
+    - name: Bumb version
+      id: bump-version
+      if: steps.should-publish.outputs.result == 'true'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        BUMP_TYPE: ${{ steps.extract-version-label.outputs.label }}
+      run: |
+        npm version $BUMP_TYPE
+
+    - name: Push on master
+      id: push
+      if: steps.should-publish.outputs.result == 'true'
+      run: |
+        git add ./CHANGELOG.md
+        git commit --amend --no-edit
+
+        git push
+        git push --tags
+
+        $COMMIT_ID=$(git rev-parse HEAD)
+        echo "::set-output name=ref::$COMMIT_ID"
+
+        $VERSION=$(cat package.json | jq '.version')
+        echo "::set-output name=version::$VERSION"
+
+    - name: Create deployment
+      id: deployment
+      if: steps.should-publish.outputs.result == 'true'
+      uses: actions/github-script@0.4.0
+      env:
+        REF: ${{ steps.push.output.ref }}
+        VERSION: ${{ steps.push.output.VERSION }}
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        previews: 'ant-man-preview,flash-preview'
+        script: |
+          const version = proces.env.VERSION;
+
+          const { data: deployment } = await github.repos.createDeployment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: `v${version}`,
+            environment: 'npm',
+            auto_merge: false,
+            required_contexts: [],
+            payload: {
+              version,
+              name,
+              ref: process.env.REF,
+              npmTag: 'latest',
+            },
+            description: `Deploy ${name}@${version} on npm`,
+            production_environment: true,
+          });
