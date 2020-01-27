@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.16]
+
 ### Added
 
 -   fake data
@@ -98,7 +100,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `hello` function
 
-[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.15...HEAD
+[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.16...HEAD
+
+[0.0.16]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.15...v0.0.16
 
 [0.0.15]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.14...v0.0.15
 
