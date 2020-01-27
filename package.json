@@ -1,6 +1,6 @@
 {
   "name": "@iadvize-oss/hello-world",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Does nothing.",
   "main": "dist/index.js",
   "files": [
