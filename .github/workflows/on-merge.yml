@@ -125,9 +125,9 @@ jobs:
       if: steps.should-publish.outputs.result == 'true'
       uses: actions/github-script@0.4.0
       env:
-        REF: ${{ steps.push.output.ref }}
-        VERSION: ${{ steps.push.output.VERSION }}
-        NAME: ${{ steps.push.output.NAME }}
+        REF: ${{ steps.push.outputs.ref }}
+        VERSION: ${{ steps.push.outputs.VERSION }}
+        NAME: ${{ steps.push.outputs.NAME }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         previews: 'ant-man-preview,flash-preview'
