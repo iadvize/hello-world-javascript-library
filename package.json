@@ -10,7 +10,8 @@
     "build": "tsc",
     "test": "jest --coverage",
     "lint": "echo \"no lint\"",
-    "bump-changelog": "VERSION=$(cat package.json | jq '.version') && remark CHANGELOG.md -o --use @jarrodldavis/changelog-version-bump=version:$VERSION && git add CHANGELOG.md "
+    "bump-changelog": "VERSION=$(cat package.json | jq '.version') && remark CHANGELOG.md -o --use @jarrodldavis/changelog-version-bump=version:$VERSION && git add CHANGELOG.md",
+    "docs": "typedoc"
   },
   "homepage": "https://github.com/iadvize/hello-world-javascript-library#readme",
   "repository": {
@@ -35,6 +36,7 @@
     "jest": "^25.1.0",
     "remark-cli": "^7.0.1",
     "ts-jest": "^25.0.0",
+    "typedoc": "^0.16.9",
     "typescript": "^3.7.5"
   }
 }

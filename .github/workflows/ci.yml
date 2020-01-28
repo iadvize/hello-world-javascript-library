@@ -2,8 +2,8 @@ name: Continuous integration
 
 on:
   push:
-    branches:
-      - '*'
+    branches-ignore:
+      - 'gh-pages'
     tags-ignore:
       - '*'
 
