@@ -1,5 +1,16 @@
 module.exports = {
-  preset: 'ts-jest',
+  roots: ['<rootDir>'],
+  testEnvironment: 'jsdom',
+  testRegex: ['src/.*\\.(test|spec)\\.[jt]sx?$'],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.jsx?$': 'babel-jest',
+  },
+  globals: {
+    'ts-jest': {
+      isolatedModules: true,
+    },
+  },
   clearMocks: true,
   coverageThreshold: {
     global: {
