@@ -6,6 +6,15 @@ on:
     types: [closed]
 
 jobs:
+  log:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
   publish-beta:
     name: 'create beta version and deploy'
     runs-on: ubuntu-18.04
