@@ -36,3 +36,8 @@ corresponding part of the changelog as content.
 Flagging a pull request with the `keep-rebased-then-merge` flag with keep it
 rebased until it can me merged.
 
+## Automatic Github Pages documentation release 
+
+Merging a pull request on master will push a new generation of the documentation
+on `gh-pages` ([example](https://iadvize.github.io/hello-world-javascript-library/))'
+
