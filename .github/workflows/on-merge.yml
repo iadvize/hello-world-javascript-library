@@ -26,7 +26,6 @@ jobs:
         node-verion: '12.x'
 
     - name: Install
-      if: steps.node-modules-cache.outputs.cache-hit != 'true'
       run: npm ci
 
     - name: Extract merge status

@@ -1,4 +1,4 @@
-name: Continuous integration
+name: Beta deployment
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   publish:
-    name: 'update, push version and deploy if needed'
+    name: 'publish beta'
     runs-on: ubuntu-18.04
 
     steps:
@@ -16,13 +16,32 @@ jobs:
         ref: master
         token: ${{ secrets.GITHUB_TOKEN_PONEY }}
 
+    - name: Cache npm cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: v1-npm-${{ github.ref }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          v1-npm-${{ github.ref }}-
+          v1-npm-
+
+    - name: Restore node_modules
+      id: node-modules-cache
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: v1-node-modules-${{ github.ref }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Install
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: npm ci
+
     - name: Git config
       run: |
         git config user.name "Github actions"
         git config user.email "github-actions@iadvize.com"
 
-    - name: Push on master
-      id: push
+    - name: Set beta version
       run: |
         npm --no-git-tag-version version prerelease --preid=beta
 
