@@ -159,12 +159,20 @@ jobs:
           console.log('::set-output name=version-changed::false');
 
     - name: Bumb version
-      id: bump-version
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         BUMP_TYPE: ${{ steps.extract-version-label.outputs.label }}
       run: |
-        npm version $BUMP_TYPE
+        npm --no-git-tag-version version $BUMP_TYPE
+
+        VERSION=$(cat package.json | jq -r '.version')
+
+        npm run bump-changelog
+
+        git add package.json CHANGELOG.md
+        git commit -m "$VERSION"
+
+        git tag "v$VERSION"
 
     - name: Push on master
       id: push
