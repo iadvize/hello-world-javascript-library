@@ -1,0 +1,67 @@
+name: Continuous integration
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  publish:
+    name: 'update, push version and deploy if needed'
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2-beta
+      with:
+        ref: master
+        token: ${{ secrets.GITHUB_TOKEN_PONEY }}
+
+    - name: Git config
+      run: |
+        git config user.name "Github actions"
+        git config user.email "github-actions@iadvize.com"
+
+    - name: Push on master
+      id: push
+      run: |
+        npm --no-git-tag-version version prerelease --preid=beta
+
+        VERSION=$(cat package.json | jq -r '.version')
+        echo "::set-output name=version::$VERSION"
+
+        git tag v$VERSION
+        git push --tags
+
+        NAME=$(cat package.json | jq -r '.name')
+        echo "::set-output name=name::$NAME"
+
+    - name: Create deployment
+      id: deployment
+      uses: actions/github-script@0.4.0
+      env:
+        VERSION: ${{ steps.push.outputs.VERSION }}
+        NAME: ${{ steps.push.outputs.NAME }}
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN_PONEY }}
+        previews: 'ant-man-preview,flash-preview'
+        script: |
+          const name = process.env.name;
+          const version = process.env.VERSION;
+
+          const { data: deployment } = await github.repos.createDeployment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: `v${version}`,
+            environment: 'npm',
+            auto_merge: false,
+            required_contexts: [],
+            payload: {
+              version,
+              name,
+              ref: context.sha,
+              npmTag: 'beta',
+            },
+            description: `Deploy ${name}@${version} on npm`,
+            production_environment: true,
+          });
+
