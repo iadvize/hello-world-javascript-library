@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.22-beta.0]
+
 ## [0.0.21]
 
 ### Added
@@ -131,7 +133,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `hello` function
 
-[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.21...HEAD
+[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.22-beta.0...HEAD
+
+[0.0.22-beta.0]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.21...v0.0.22-beta.0
 
 [0.0.21]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.0.20...v0.0.21
 
