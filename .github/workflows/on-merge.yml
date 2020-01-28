@@ -34,6 +34,9 @@ jobs:
 
     - name: Push gh-pages
       run: |
+        git fetch origin gh-pages
+        git branch --track gh-pages origin/gh-pages
+
         git worktree add gh-pages-content gh-pages
         cp -r docs/* gh-pages-content
         cd gh-pages-content
