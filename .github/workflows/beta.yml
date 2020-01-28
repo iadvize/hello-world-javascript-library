@@ -42,6 +42,7 @@ jobs:
         git config user.email "github-actions@iadvize.com"
 
     - name: Set beta version
+      id: version
       run: |
         npm --no-git-tag-version version prerelease --preid=beta
 
@@ -58,8 +59,8 @@ jobs:
       id: deployment
       uses: actions/github-script@0.4.0
       env:
-        VERSION: ${{ steps.push.outputs.VERSION }}
-        NAME: ${{ steps.push.outputs.NAME }}
+        VERSION: ${{ steps.version.outputs.VERSION }}
+        NAME: ${{ steps.version.outputs.NAME }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN_PONEY }}
         previews: 'ant-man-preview,flash-preview'
