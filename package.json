@@ -4,7 +4,7 @@
   "description": "Say hello",
   "main": "dist/index.js",
   "module": "esm/index.js",
-  "types": "dist/index.d.js",
+  "types": "dist/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist",
