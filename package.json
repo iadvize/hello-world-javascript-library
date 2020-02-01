@@ -6,7 +6,8 @@
   "module": "esm/index.js",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "esm"
   ],
   "scripts": {
     "build": "rm -rf dist esm && rollup -c",
