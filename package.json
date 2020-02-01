@@ -31,7 +31,7 @@
   "private": false,
   "devDependencies": {
     "@babel/core": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
     "@jarrodldavis/remark-changelog-version-bump": "^0.1.1",
     "@rollup/plugin-commonjs": "^11.0.1",
     "@rollup/plugin-typescript": "^3.0.0",
