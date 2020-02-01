@@ -7,4 +7,5 @@ update_configs:
     version_requirement_updates: "increase_versions"
     commit_message:
       prefix: "misc"
-
+    default_labels:
+      - "patch"
