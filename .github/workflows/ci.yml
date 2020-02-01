@@ -61,7 +61,7 @@ jobs:
         key: v1-node-modules-${{ github.ref }}-${{ hashFiles('package-lock.json') }}
 
     - name: Lint
-      run: npm run lint
+      run: npm run lint:js
 
   test:
     name: 'test'
@@ -85,7 +85,7 @@ jobs:
         key: v1-node-modules-${{ github.ref }}-${{ hashFiles('package-lock.json') }}
 
     - name: Test
-      run: npm run test
+      run: npm run test:js
 
   build:
     name: 'build'
