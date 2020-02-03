@@ -247,7 +247,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN_PONEY }}
         previews: 'ant-man-preview,flash-preview'
         script: |
-          const name = process.env.name;
+          const name = process.env.NAME;
           const version = process.env.VERSION;
 
           const { data: deployment } = await github.repos.createDeployment({
