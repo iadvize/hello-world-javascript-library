@@ -99,7 +99,6 @@ jobs:
     - name: Push on master
       id: push
       run: |
-
         git push
         git push --tags
 
@@ -279,14 +278,13 @@ jobs:
         VERSION_PART="${VERSION_PART//$'\r'/'%0D'}"
         echo VERSION_PART=$VERSION_PART
 
-        echo "::set-output name=version::$VERSION"
         echo "::set-output name=version-part::$VERSION_PART"
 
     - name: Create Release
       uses: actions/github-script@0.4.0
       env:
         COMMIT: ${{ github.sha }}
-        VERSION: ${{ steps.extract-changelog.outputs.version }}
+        VERSION: ${{ steps.push.outputs.version }}
         BODY: ${{ steps.extract-changelog.outputs.version-part }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
