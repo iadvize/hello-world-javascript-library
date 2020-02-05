@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- misc: bump ts-jest from 25.1.0 to 25.2.0 #57
+
 ## [0.1.4]
 
 ### Changed
