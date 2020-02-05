@@ -3,11 +3,13 @@ name: Merge pull requests once ready
 on:
   check_suite:
     types: [completed]
-    branches-ignore: [master]
+    branches:
+      - '*'
+      - '!master'
   pull_request:
     types: [labeled]
   pull_request_review:
-    types: [submitted, dismissed]
+    types: [submitted]
 
 jobs:
   build:
@@ -32,7 +34,7 @@ jobs:
           github.event_name == 'check_suite'
           && github.event.check_suite.head_branch != 'master'
           && github.event.check_suite.conclusion == 'success'
-          && steps.pr.outputs.pullExists
+          && steps.pr.outputs.pullExists == 'true'
         )
       with:
         # we use another token here
