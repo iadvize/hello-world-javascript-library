@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   misc: bump @rollup/plugin-commonjs from 11.0.1 to 11.0.2 #56
+
 ## [0.1.5]
 
 ### Changed
