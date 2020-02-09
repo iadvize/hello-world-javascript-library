@@ -41,3 +41,6 @@ rebased until it can me merged.
 Merging a pull request on master will push a new generation of the documentation
 on `gh-pages` ([example](https://iadvize.github.io/hello-world-javascript-library/))'
 
+## Dependabot
+
+See [`config`](.dependabot/config.yml)
