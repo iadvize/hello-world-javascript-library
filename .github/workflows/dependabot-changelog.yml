@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2-beta
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        token: ${{ secrets.GITHUB_TOKEN_PONEY }}
 
     - name: Update changelog
       env:
