@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.10]
+
 ### Changed
-- misc: bump typedoc from 0.16.9 to 0.16.10
+
+-   misc: bump typedoc from 0.16.9 to 0.16.10
 
 ## [0.1.9]
 
@@ -208,7 +211,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `hello` function
 
-[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.10...HEAD
+
+[0.1.10]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.9...v0.1.10
 
 [0.1.9]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.8...v0.1.9
 
