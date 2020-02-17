@@ -1,4 +1,4 @@
-name: Pull request changelog
+name: Pull request labels
 
 on:
   pull_request:
