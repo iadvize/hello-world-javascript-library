@@ -1,6 +1,6 @@
 {
   "name": "@iadvize-oss/hello-world",
-  "version": "0.1.10",
+  "version": "0.1.11-beta.0",
   "description": "Say hello",
   "main": "dist/index.js",
   "module": "esm/index.js",
