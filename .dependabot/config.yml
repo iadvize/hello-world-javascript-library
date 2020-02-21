@@ -9,3 +9,6 @@ update_configs:
       prefix: "misc"
     default_labels:
       - "patch"
+    allowed_updates:
+      - match:
+          dependency_name: "nothing"
