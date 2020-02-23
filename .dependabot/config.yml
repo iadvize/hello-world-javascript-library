@@ -12,3 +12,7 @@ update_configs:
     allowed_updates:
       - match:
           dependency_name: "nothing"
+    automerged_updates:
+      - match:
+          dependency_type: "development"
+          update_type: "in_range"
