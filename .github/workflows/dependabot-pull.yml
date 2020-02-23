@@ -24,7 +24,7 @@ jobs:
             assignees: ['iadvizeponey']
           });
 
-          github.pulls.createReview({
+          await github.pulls.createReview({
             owner: context.repo.owner,
             repo: context.repo.repo,
             pull_number: context.payload.pull_request.number,
