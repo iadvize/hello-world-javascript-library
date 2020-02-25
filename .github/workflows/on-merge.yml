@@ -64,13 +64,13 @@ jobs:
     needs:
     - generate-docs
 
-    if:
+    if: >
       github.event.pull_request.merged == true && (
         contains(github.event.pull_request.labels.*.name, 'Action: patch bump')
       || contains(github.event.pull_request.labels.*.name, 'Action: minor bump')
       || contains(github.event.pull_request.labels.*.name, 'Action: major bump')
       || contains(github.event.pull_request.labels.*.name, 'Action: beta bump')
-    )
+      )
 
     steps:
     - uses: actions/checkout@v2-beta
