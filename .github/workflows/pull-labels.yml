@@ -16,6 +16,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const versionLabels = [
+            'Action: no bump',
             'Action: beta bump',
             'Action: patch bump',
             'Action: minor bump',
