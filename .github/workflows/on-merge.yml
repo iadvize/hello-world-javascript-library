@@ -64,7 +64,8 @@ jobs:
     needs:
     - generate-docs
 
-    if: github.event.pull_request.merged == true && (
+    if:
+      github.event.pull_request.merged == true && (
         contains(github.event.pull_request.labels.*.name, 'Action: patch bump')
       || contains(github.event.pull_request.labels.*.name, 'Action: minor bump')
       || contains(github.event.pull_request.labels.*.name, 'Action: major bump')
