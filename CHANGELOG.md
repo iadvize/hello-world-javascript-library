@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.11]
+
 ### Changed
 
 -   misc: bump @types/jest from 25.1.2 to 25.1.3
@@ -216,7 +218,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `hello` function
 
-[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.11...HEAD
+
+[0.1.11]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.10...v0.1.11
 
 [0.1.10]: https://github.com/iadvize/hello-world-javascript-library/compare/v0.1.9...v0.1.10
 
