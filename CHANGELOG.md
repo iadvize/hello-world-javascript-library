@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - misc: bump @types/jest from 25.1.2 to 25.1.3
-
-### Changed
 - misc: bump ts-jest from 25.2.0 to 25.2.1
 
 ## [0.1.10]
