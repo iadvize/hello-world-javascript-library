@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- update libs
 - move remark out of package.json
+- update libs
 
 ## [0.1.11]
 
